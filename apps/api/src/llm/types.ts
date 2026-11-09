@@ -24,10 +24,9 @@ export type Message =
   | { role: "assistant"; content: ContentBlock[] };
 
 export type ToolDefinition = {
-  system: string;
-  messages: Message[];
-  tools: ToolDefinition[];
-  maxTokens: number;
+  name: string;
+  description: string;
+  input_schema: Record<string, unknown>; // JSON Schema
 };
 
 export type CreateMessageParams = {
