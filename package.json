@@ -10,7 +10,8 @@
     "dev:api": "npm run dev -w @accesslens/api",
     "dev:web": "npm run dev -w @accesslens/web",
     "test": "npm test -w @accesslens/api",
-    "typecheck": "npm run typecheck --workspaces --if-present"
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "eval": "npm run eval -w @accesslens/api --"
   },
   "engines": {
     "node": ">=22"

@@ -36,6 +36,23 @@ describe("createAudit", () => {
     assert.deepEqual(body.findings[0].wcag, ["4.1.2", "1.3.1"]);
   });
 
+  it("checks the agent's evidence against the submitted code", async () => {
+    const res = await createAudit({ kind: "html", html: "<input name=email>" }, deps());
+    const body = res.body as { findings: Array<{ evidence: string }>; promptVersion: string };
+    assert.equal(body.findings[0].evidence, "verified");
+    assert.match(body.promptVersion, /^[0-9a-f]{8}$/);
+  });
+
+  it("flags findings that point at code that isn't there", async () => {
+    const res = await createAudit(
+      { kind: "html", html: "<p>Nothing to see</p>" },
+      deps(), // the fake scanner still reports an <input>, which this HTML doesn't contain
+    );
+    const body = res.body as { findings: Array<{ evidence: string; needsHumanReview: boolean }> };
+    assert.equal(body.findings[0].evidence, "not-found");
+    assert.equal(body.findings[0].needsHumanReview, true);
+  });
+
   it("fetches the page for URL audits", async () => {
     let fetched = "";
     const res = await createAudit({ kind: "url", url: "https://example.com" },

@@ -48,9 +48,12 @@ const goodReport = {
       severity: "critical",
       wcag: ["1.1.1"],
       source: "automated",
+      affects: ["screen-reader"],
+      confidence: "high",
+      needsHumanReview: false,
       element: '<img src="logo.png">',
       explanation: "Screen reader users hear nothing.",
-      fix: '<img src="logo.png" alt="Globalfaces">',
+      fix: '<img src="logo.png" alt="Company logo">',
     },
   ],
 };

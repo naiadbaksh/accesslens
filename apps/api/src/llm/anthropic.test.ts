@@ -33,6 +33,7 @@ describe("AnthropicClient", () => {
     const headers = sent!.headers as Record<string, string>;
     assert.equal(headers["x-api-key"], "test-key");
     assert.equal(headers["anthropic-version"], "2023-06-01");
+    assert.equal(headers["content-type"], "application/json");
     assert.equal(JSON.parse(sent!.body as string).model, "claude-test");
     assert.ok(sent!.signal, "every call has a timeout signal");
     assert.equal(res.usage.inputTokens, 10);

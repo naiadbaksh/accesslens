@@ -1,8 +1,6 @@
 // The small slice of the Claude Messages API this app uses.
 // Docs: https://docs.claude.com/en/api/messages
 
-import type { Text } from "axe-core";
-
 export type TextBlock = { type: "text"; text: string };
 export type ToolUseBlock = {
   type: "tool_use";

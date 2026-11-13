@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { z } from "zod";
 import {
   AgentReport,
@@ -30,11 +31,22 @@ How to work:
 
 Rules for findings:
 - Only report problems you can point to in the submitted code. Never invent elements.
+- element must be copied exactly from the submitted code, so it can be found there. Shorten long code with … but don't rewrite it.
 - source is "automated" if the scanner found it, otherwise "ai-review".
+- affects lists the groups of people the problem gets in the way of, most affected first.
+- confidence is "high" when the scanner confirmed it or the code leaves no doubt, "medium" when you inferred it from the code, "low" when it depends on how the page looks, sounds or behaves when running.
+- needsHumanReview is true when a person has to judge it: whether alt text or link text actually makes sense, contrast worked out from CSS, reading or focus order, cognitive load. Automated tools can't settle these, and people with disabilities are the real test.
 - explanation says who is affected (e.g. screen reader users, keyboard users) in one or two plain sentences.
 - fix is corrected code the developer can paste in.
 - Combine repeats of the same problem into one finding.
 - If there are no real problems, submit an empty findings list and say so in the summary.`;
+
+// A short fingerprint of the prompt. Saved with every audit and eval run, so when results
+// change we can tell whether the prompt changed or the model did.
+export const PROMPT_VERSION = createHash("sha256")
+  .update(SYSTEM_PROMPT)
+  .digest("hex")
+  .slice(0, 8);
 
 const MAX_CODE_CHARS = 30_000; // keep the prompt within a sensible token budget
 

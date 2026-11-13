@@ -1,11 +1,11 @@
-import { HttpError, withRetry } from "../http/retry";
+import { HttpError, withRetry } from "../http/retry.ts";
 import type {
   CreateMessageParams,
   CreateMessageResult,
   LlmClient,
 } from "./types.ts";
 
-// Calls the Claude Message API with plain fetch, so every part of the request is visible.
+// Calls the Claude Messages API with plain fetch, so every part of the request is visible.
 // (The official @anthropic-ai/sdk does the same thing with more conveniences)
 
 export class AnthropicClient implements LlmClient {
@@ -27,7 +27,7 @@ export class AnthropicClient implements LlmClient {
         {
           method: "POST",
           headers: {
-            "content-type": "applications/json",
+            "content-type": "application/json",
             "x-api-key": this.apiKey,
             "anthropic-version": "2023-06-01",
           },

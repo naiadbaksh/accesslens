@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import type { AuditRequest } from "@accesslens/shared";
 
 type Kind = AuditRequest["kind"];
@@ -14,6 +14,14 @@ const SAMPLE_HTML = `<!doctype html>
   </body>
 </html>`;
 
+const SAMPLE_RN = `export function ShareButton({ onShare }) {
+  return (
+    <TouchableOpacity onPress={onShare} style={{ width: 24, height: 24 }}>
+      <Image source={require("./share.png")} />
+    </TouchableOpacity>
+  );
+}`;
+
 export function AuditForm(props: {
   busy: boolean;
   onSubmit: (req: AuditRequest) => void;
@@ -23,7 +31,13 @@ export function AuditForm(props: {
   const [url, setUrl] = useState("");
   const [code, setCode] = useState("");
 
-  function handleSubmit(e: FormEvent) {
+  // Fill the current box with code that has known problems, for a quick demo.
+  function loadExample() {
+    if (kind === "html") setHtml(SAMPLE_HTML);
+    if (kind === "react-native") setCode(SAMPLE_RN);
+  }
+
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (kind === "html") props.onSubmit({ kind, html });
     else if (kind === "url") props.onSubmit({ kind, url: url.trim() });
@@ -100,9 +114,16 @@ export function AuditForm(props: {
         </>
       )}
 
-      <button type="submit" disabled={props.busy}>
-        {props.busy ? "Auditing…" : "Run audit"}
-      </button>
+      <div className="form-actions">
+        <button type="submit" disabled={props.busy}>
+          {props.busy ? "Auditing…" : "Run audit"}
+        </button>
+        {kind !== "url" && (
+          <button type="button" className="secondary" onClick={loadExample}>
+            Load an example
+          </button>
+        )}
+      </div>
     </form>
   );
 }

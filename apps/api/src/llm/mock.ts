@@ -72,6 +72,9 @@ export class MockLlm implements LlmClient {
                 .filter((t) => /^\d\.\d\.\d{1,2}$/.test(t))
                 .slice(0, 5),
               source: "automated",
+              affects: ["screen-reader"],
+              confidence: "high",
+              needsHumanReview: false,
               element: (v.examples[0] ?? "").slice(0, 500),
               explanation:
                 "Found by the automated scanner. Mock mode doesn't explain impact.",

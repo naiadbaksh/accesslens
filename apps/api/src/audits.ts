@@ -1,5 +1,11 @@
 import { AuditRequest, type AuditResponse } from "@accesslens/shared";
-import { AgentError, runAgent, type AgentDeps } from "./agent/agent.ts";
+import {
+  AgentError,
+  PROMPT_VERSION,
+  runAgent,
+  type AgentDeps,
+} from "./agent/agent.ts";
+import { checkFindings } from "./agent/evidence.ts";
 import { FetchPageError } from "./scanner/fetchPage.ts";
 import { HttpError } from "./http/retry.ts";
 
@@ -42,14 +48,20 @@ export async function createAudit(
 
     // 3. Let the agent investigate and report.
     const report = await runAgent(req, deps, { html });
+
+    // 4. Check the agent's work against the code it was given, instead of trusting it.
+    const source = req.kind === "react-native" ? req.code : (html ?? "");
     const response: AuditResponse = {
-      ...report,
+      summary: report.summary,
+      findings: checkFindings(report.findings, source),
+      steps: report.steps,
       model: deps.llm.model,
+      promptVersion: PROMPT_VERSION,
       durationMs: Date.now() - started,
     };
     return { status: 200, body: response };
   } catch (err) {
-    // 4. Turn known failures into clear messages. Anything else is a 500, logged by the caller.
+    // 5. Turn known failures into clear messages. Anything else is a 500, logged by the caller.
     if (err instanceof FetchPageError)
       return {
         status: err.status,
